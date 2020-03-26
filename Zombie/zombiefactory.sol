@@ -1,6 +1,9 @@
 pragma solidity ^0.4.19;
 
-contract ZombieFactory {
+import "./ownable.sol";
+
+//le contrats et ses héritiers hérient de Ownable, pourront appeler le modificateur de ft onlyOwner
+contract ZombieFactory is Ownable {
 
     //event appelé tracké coté front.
     event NewZombie(uint zombieId, string name, uint dna);
@@ -9,10 +12,14 @@ contract ZombieFactory {
 
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits; //pour s'assurer que dna de chaque zombie == 16 digits
+    uint cooldownTime = 1 days; //days, comme seconds, minutes, hours, now - unités de temps solidity, en secondes.
 
     struct Zombie {
         string name;
         uint dna;
+        uint32 level;
+        uint32 readyTime;
+        //regroupement des uints 32 pour que solidity les emboite dans la struct - moins de place, economie de gas.
     }
 
     Zombie[] public zombies; //tableau de structures, dynamique, public.
@@ -24,7 +31,7 @@ contract ZombieFactory {
 
     //les fonctions private ne sont pas accessibles par des classes héritées, contrairement aux fonctions internal.
     function _createZombie(string _name, uint _dna) internal {
-        uint id = zombies.push(Zombie(_name, _dna)) - 1;
+        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime))) - 1; // 1 pour level, unix seconds + 1 day in seconds pour readyTime. Je cast en uint32 car now renvoie uint256 par defaut.
         zombieToOwner[id] = msg.sender; //msg sender renvoie adresse de celui qui appelle la ft coté front
         ownerZombieCount[msg.sender]++; //mapping comme une variable.
         NewZombie(id, _name, _dna); //déclenchement de l'event

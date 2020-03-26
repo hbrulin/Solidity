@@ -45,6 +45,11 @@ Ressources :
 
 Un _ évènement _ est un moyen pour votre contrat d'indiquer à votre application frontale (front-end) que quelque chose vient d'arriver sur la blockchain, l'application frontale pouvant être «à l'écoute» de certains événements pour prendre des mesures quand ils se produisent.
 
+
+The address of an external account is determined from the public key while the address of a contract is determined at the time the contract is created (it is derived from the creator address and the number of transactions sent from that address, the so-called “nonce”).
+
+
+
 To read :
 - https://github.com/ConsenSys/smart-contract-best-practices
 - https://github.com/OpenZeppelin/openzeppelin-contracts
