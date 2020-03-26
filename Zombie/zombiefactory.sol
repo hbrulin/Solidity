@@ -20,6 +20,8 @@ contract ZombieFactory is Ownable {
         uint32 level;
         uint32 readyTime;
         //regroupement des uints 32 pour que solidity les emboite dans la struct - moins de place, economie de gas.
+        uint16 winCount;
+        uint16 lossCount;
     }
 
     Zombie[] public zombies; //tableau de structures, dynamique, public.
@@ -31,7 +33,7 @@ contract ZombieFactory is Ownable {
 
     //les fonctions private ne sont pas accessibles par des classes héritées, contrairement aux fonctions internal.
     function _createZombie(string _name, uint _dna) internal {
-        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime))) - 1; // 1 pour level, unix seconds + 1 day in seconds pour readyTime. Je cast en uint32 car now renvoie uint256 par defaut.
+        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1; // 1 pour level, unix seconds + 1 day in seconds pour readyTime. Je cast en uint32 car now renvoie uint256 par defaut.
         zombieToOwner[id] = msg.sender; //msg sender renvoie adresse de celui qui appelle la ft coté front
         ownerZombieCount[msg.sender]++; //mapping comme une variable.
         NewZombie(id, _name, _dna); //déclenchement de l'event

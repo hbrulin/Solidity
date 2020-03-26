@@ -30,6 +30,12 @@ contract ZombieFeeding is ZombieFactory {
     kittyContract = KittyInterface(_address);
   }
 
+//modifier pour éviter d'avoir à écrire sans arret la vérification du propriétaire du zombie
+  modifier ownerOf(uint _zombieId) {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    _;
+  }
+
   //ici je passe un pointeur sur une structure zombie.
   function _triggerCooldown(Zombie storage _zombie) internal {
     _zombie.readyTime = uint32(now + cooldownTime);
@@ -40,8 +46,7 @@ contract ZombieFeeding is ZombieFactory {
   }
 
 
-  function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal {
-    require(msg.sender == zombieToOwner[_zombieId]); //il faut que celui qui appelle la ft soit proprietaire du zombie 
+  function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal ownerOf(_zombieId) {
     Zombie storage myZombie = zombies[_zombieId]; //decla d'un zombie en storage, sur la blockchain
     require(_isReady(myZombie)); //il faut que cooldown soit passé
     _targetDna = _targetDna % dnaModulus; //verif 16 digits
