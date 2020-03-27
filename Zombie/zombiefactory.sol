@@ -1,9 +1,14 @@
 pragma solidity ^0.4.19;
 
 import "./ownable.sol";
+import "./safemath.sol";
 
 //le contrats et ses héritiers hérient de Ownable, pourront appeler le modificateur de ft onlyOwner
 contract ZombieFactory is Ownable {
+
+    using SafeMath for uint256;
+    using SafeMath32 for uint32;
+    using SafeMath16 for uint16;
 
     //event appelé tracké coté front.
     event NewZombie(uint zombieId, string name, uint dna);
@@ -35,7 +40,7 @@ contract ZombieFactory is Ownable {
     function _createZombie(string _name, uint _dna) internal {
         uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1; // 1 pour level, unix seconds + 1 day in seconds pour readyTime. Je cast en uint32 car now renvoie uint256 par defaut.
         zombieToOwner[id] = msg.sender; //msg sender renvoie adresse de celui qui appelle la ft coté front
-        ownerZombieCount[msg.sender]++; //mapping comme une variable.
+        ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].add(1); //mapping comme une variable. + utilisation de safemath
         NewZombie(id, _name, _dna); //déclenchement de l'event
     }
 
