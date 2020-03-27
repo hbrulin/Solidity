@@ -48,6 +48,9 @@ Un _ évènement _ est un moyen pour votre contrat d'indiquer à votre applicati
 
 The address of an external account is determined from the public key while the address of a contract is determined at the time the contract is created (it is derived from the creator address and the number of transactions sent from that address, the so-called “nonce”).
 
+#installer web3.js
+npm install web3.
+npm est le gestionnaire de paquets officiel de Node.js.
 
 
 To read :
